@@ -1,0 +1,5 @@
+max_width = 100           
+tab_spaces = 2            
+hard_tabs = false         # Use spaces instead of tabs
+edition = "2024"          # Rust edition
+use_small_heuristics = "Max"
