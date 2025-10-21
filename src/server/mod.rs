@@ -1,4 +1,5 @@
 mod config;
+mod getters;
 
 use std::sync::Arc;
 
