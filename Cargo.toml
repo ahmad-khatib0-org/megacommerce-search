@@ -15,6 +15,7 @@ sqlx = { version = "0.8.6", features = [
   "chrono",
   "uuid",
 ] }
+deadpool-redis = { version = "0.22.0", features = ["serde", "rt_tokio_1"] }
 rdkafka = { version = "0.38.0", features = ["tokio"] }
 reqwest = { version = "0.12.24", features = ["json", "gzip", "rustls-tls"] }
 tokio = { version = "^1.41.1", features = ["full"] }
