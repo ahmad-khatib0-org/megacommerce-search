@@ -19,7 +19,7 @@ pub struct CommonArgs {
   pub service_config: Config,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Common {
   pub(super) client: Option<CommonServiceClient<Channel>>,
   pub(super) service_config: Config,
