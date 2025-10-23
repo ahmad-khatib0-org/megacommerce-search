@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-megacommerce-proto = "0.2.55"
-megacommerce-shared = "0.4.0"
+megacommerce-proto = "0.2.63"
+megacommerce-shared = "0.4.35"
 tonic = "0.13.1"
 futures = "0.3.31"
 sqlx = { version = "0.8.6", features = [
