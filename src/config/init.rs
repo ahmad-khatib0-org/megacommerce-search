@@ -29,7 +29,7 @@ impl Common {
     match response {
       Ok(Ok(_)) => {}
       Ok(Err(e)) => {
-        return Err(return_err("failed to ping the common client service", Box::new(e)))
+        return Err(return_err("failed to ping the common client service", Box::new(e)));
       }
       Err(e) => return Err(return_err("the ping to common client service timedout", Box::new(e))),
     };

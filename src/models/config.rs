@@ -16,10 +16,7 @@ pub struct ServiceConfig {
 impl Default for Config {
   fn default() -> Self {
     Config {
-      service: ServiceConfig {
-        env: "".to_string(),
-        common_service_grpc_url: "".to_string(),
-      },
+      service: ServiceConfig { env: "".to_string(), common_service_grpc_url: "".to_string() },
     }
   }
 }

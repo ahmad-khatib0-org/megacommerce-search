@@ -539,7 +539,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -1361,9 +1361,9 @@ dependencies = [
 
 [[package]]
 name = "megacommerce-proto"
-version = "0.2.55"
+version = "0.2.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea2ac97b5e2e3ae28327aa58685d656ee3c79a01970a673c249d1d50c1091236"
+checksum = "af4378b8e8abe2cff2de078e4c1653cad7100d3e8a2043bd4d1618ec0c7b8cf8"
 dependencies = [
  "prost 0.13.5",
  "prost-types",
@@ -1384,7 +1384,7 @@ dependencies = [
  "hyper",
  "hyper-util",
  "md5",
- "megacommerce-proto 0.2.55",
+ "megacommerce-proto 0.2.58",
  "megacommerce-shared",
  "once_cell",
  "parking_lot",
@@ -1412,7 +1412,7 @@ dependencies = [
  "chrono",
  "derive_more",
  "http",
- "megacommerce-proto 0.2.55",
+ "megacommerce-proto 0.2.58",
  "megacommerce-shared-sanitize-derive",
  "regex",
  "scopeguard",
@@ -1499,7 +1499,7 @@ version = "0.50.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2012,7 +2012,7 @@ dependencies = [
  "once_cell",
  "socket2 0.6.1",
  "tracing",
- "windows-sys 0.60.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2275,7 +2275,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2858,7 +2858,7 @@ dependencies = [
  "getrandom 0.3.4",
  "once_cell",
  "rustix",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -3529,7 +3529,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]

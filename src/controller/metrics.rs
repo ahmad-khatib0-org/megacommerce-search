@@ -355,4 +355,3 @@ async fn handle_metrics_request(
 
   Ok(resp)
 }
-
