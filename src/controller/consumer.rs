@@ -44,6 +44,7 @@ impl Controller {
               sleep(Duration::from_secs(1)).await;
             }
             Ok(msg) => {
+                              let http = self.http.clone();
               // Extract payload and convert to String early to avoid lifetime issues
               let payload_str = if let Some(payload_bytes) = msg.payload() {
                 match from_utf8(payload_bytes) {
@@ -92,7 +93,6 @@ impl Controller {
                 let highest = self.highest_offset.clone();
                 let join_set = self.join_set.clone();
                 let producer = self.producer.clone();
-                let http = self.http.clone();
 
                 // Parse op for metrics
                 let permit_fut = semaphore.acquire_owned();
@@ -111,7 +111,7 @@ impl Controller {
                   inc_inflight();
                   let start = Instant::now();
 
-                  let process_res = message_processor(&payload_str, http, &cfg).await;
+                  let process_res = message_processor(&payload_str, &http, &cfg).await;
                   match process_res {
                     Ok(()) => {
                       // Update highest offset
@@ -159,7 +159,7 @@ impl Controller {
                 info!("Draining mode: processing message inline before shutdown.");
                 inc_inflight();
                 let start = Instant::now();
-                let res_inline = message_processor(&payload_str, self.http.clone(), &cfg).await;
+                let res_inline = message_processor(&payload_str, &http, &cfg).await;
 
                 match res_inline {
                   Ok(()) => {
