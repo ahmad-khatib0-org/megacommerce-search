@@ -1,5 +1,6 @@
 mod commit_coordinator;
 mod consumer;
+mod consumer_shutdown;
 mod message_processor;
 mod metrics;
 mod shutdown;
