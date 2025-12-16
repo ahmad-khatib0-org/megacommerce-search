@@ -6,17 +6,20 @@ WORKDIR /app
 ENV ENV=dev \
     CARGO_NET_GIT_FETCH_WITH_CLI=true
 
-# Install system dependencies
+# Install system dependencies - ADD build-essential for C++ compiler (rdkafka)
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     pkg-config \
     libssl-dev \
     postgresql-client \
     curl \
+    python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Dependencies stage
 FROM base AS deps
 
+COPY .sqlx ./.sqlx
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
 
