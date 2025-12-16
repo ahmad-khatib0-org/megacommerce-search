@@ -44,7 +44,7 @@ impl Controller {
               sleep(Duration::from_secs(1)).await;
             }
             Ok(msg) => {
-                              let http = self.http.clone();
+              let http = self.http.clone();
               // Extract payload and convert to String early to avoid lifetime issues
               let payload_str = if let Some(payload_bytes) = msg.payload() {
                 match from_utf8(payload_bytes) {

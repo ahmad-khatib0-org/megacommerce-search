@@ -12,7 +12,7 @@ use crate::controller::metrics::set_committed_offset;
 use super::Controller;
 
 impl Controller {
-  pub async fn consumer_shutdown(self) {
+  pub async fn consumer_shutdown(&self) {
     let cfg = self.config.get().await.meilisearch.as_ref().unwrap().clone();
     let shutdown_wait_secs = cfg.shutdown_wait_secs() as u64;
     info!("Stopped consuming; waiting up to {}s for in-flight tasks...", shutdown_wait_secs);

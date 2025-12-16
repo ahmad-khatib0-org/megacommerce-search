@@ -130,7 +130,11 @@ impl Controller {
 
     self.periodic_commit();
 
+    self.shutdown_listener();
+
     self.messages_consumer().await;
+
+    self.consumer_shutdown().await;
 
     Ok(())
   }
