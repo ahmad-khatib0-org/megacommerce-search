@@ -20,7 +20,7 @@ use tokio::{
 };
 
 use crate::{
-  config::{Common, CommonArgs},
+  common::{Common, CommonArgs},
   controller::{Controller, ControllerArgs},
   models::config::Config,
 };

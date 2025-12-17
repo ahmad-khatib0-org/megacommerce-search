@@ -1,4 +1,4 @@
-mod config;
+mod common;
 mod controller;
 pub mod models;
 mod server;
