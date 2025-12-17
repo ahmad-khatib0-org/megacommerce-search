@@ -1,0 +1,4 @@
+---
+service:
+  env: local
+  common_service_grpc_url: http://localhost:50051

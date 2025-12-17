@@ -8,7 +8,11 @@ use super::Server;
 
 impl Server {
   pub async fn init_servie_config(&self) -> Result<(), BoxedErr> {
-    let env = env::var("ENV").unwrap_or_else(|_| "dev".into());
+    let mut env_mode = env::var("ENV").unwrap_or("local".to_string());
+    if !["local", "dev", "production"].contains(&env_mode.as_str()) {
+      env_mode = "local".to_string();
+    }
+
     let ie = |msg: String, err: BoxedErr| InternalError {
       err_type: ErrorType::ConfigError,
       temp: false,
@@ -17,7 +21,7 @@ impl Server {
       err,
     };
 
-    let yaml_string = fs::read_to_string(format!("config.{}.yaml", env))
+    let yaml_string = fs::read_to_string(format!("config.{}.yaml", env_mode))
       .map_err(|err| ie("failed to load service config file".to_string(), Box::new(err)))?;
 
     let parsed_config: Config = serde_yaml::from_str(&yaml_string)
