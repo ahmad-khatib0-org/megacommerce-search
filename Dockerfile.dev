@@ -3,17 +3,19 @@ FROM rust:alpine AS builder
 
 WORKDIR /app
 
-# 1. Install ALL build dependencies (INCLUDING BASH!)
+# 1. Install ALL build dependencies (INCLUDING STATIC LIBRARIES!)
 RUN apk add --no-cache \
     musl-dev \
     pkgconfig \
     openssl-dev \
+    openssl-libs-static \
     build-base \
     postgresql-dev \
     curl-dev \
     python3 \
     librdkafka-dev \
     zlib-dev \
+    zlib-static \
     zstd-dev \
     lz4-dev \
     cmake \
@@ -36,26 +38,21 @@ COPY .sqlx ./.sqlx
 COPY src ./src
 COPY config.dev.yaml ./
 
-# 6. Build (WITHOUT musl target for rdkafka)
-RUN cargo build --release && \
-    strip target/release/megacommerce-search
+# 6. Build WITH musl target (now we have static libs!)
+RUN cargo build --release --target x86_64-unknown-linux-musl && \
+    strip target/x86_64-unknown-linux-musl/release/megacommerce-search
 
 # Stage 2: Runtime
 FROM alpine:latest
 WORKDIR /app
 
-# Install runtime dependencies (rdkafka needs glibc, not musl)
+# Install runtime dependencies (now binary is statically linked, needs fewer libs)
 RUN apk add --no-cache \
     libgcc \
     postgresql-client \
-    ca-certificates \
-    librdkafka \
-    zstd-libs \
-    lz4-libs \
-    # For dynamic linking (rdkafka needs glibc)
-    libc6-compat
+    ca-certificates
 
-COPY --from=builder /app/target/release/megacommerce-search /usr/local/bin/
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/megacommerce-search /usr/local/bin/
 COPY --from=builder /app/config.dev.yaml ./
 
 EXPOSE 50057
