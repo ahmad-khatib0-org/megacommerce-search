@@ -78,6 +78,7 @@ impl Server {
     // self.db = Some(Arc::new(RwLock::new(self.init_database().await?)));
 
     let translations = self.common.translations(|trans| trans.clone()).await;
+    let cfg = self.config().get().await.localization.clone().unwrap_or_default();
     translations_init(
       translations,
       5,
