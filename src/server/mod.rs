@@ -78,7 +78,13 @@ impl Server {
     // self.db = Some(Arc::new(RwLock::new(self.init_database().await?)));
 
     let translations = self.common.translations(|trans| trans.clone()).await;
-    translations_init(translations, 5).map_err(|err| ie("error init trans", Box::new(err)))?;
+    translations_init(
+      translations,
+      5,
+      cfg.default_client_locale.unwrap_or_default(),
+      cfg.available_locales,
+    )
+    .map_err(|err| ie("error init trans", Box::new(err)))?;
 
     let ctr_args = ControllerArgs { redis: self.redis(), config: self.config() };
     let ctr = Controller::new(ctr_args).await?;
