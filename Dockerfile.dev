@@ -3,7 +3,7 @@ FROM rust:alpine AS builder
 
 WORKDIR /app
 
-# 1. FIRST: Install ALL build dependencies (500MB layer - cached unless package list changes)
+# 1. Install ALL build dependencies (INCLUDING BASH!)
 RUN apk add --no-cache \
     musl-dev \
     pkgconfig \
@@ -17,9 +17,10 @@ RUN apk add --no-cache \
     zstd-dev \
     lz4-dev \
     cmake \
-    g++
+    g++ \
+    bash
 
-# 2. Copy dependency files (changes rarely)
+# 2. Copy dependency files
 COPY Cargo.toml Cargo.lock ./
 
 # 3. Create dummy src to cache dependencies
@@ -27,23 +28,36 @@ RUN mkdir src && \
     echo "fn main() {}" > src/main.rs && \
     echo "// dummy" > src/lib.rs
 
-# 4. Download and cache dependencies (uses Cargo.lock)
+# 4. Download and cache dependencies
 RUN cargo fetch --locked
 
-# 5. NOW copy source code (changes often)
+# 5. Copy source code
 COPY .sqlx ./.sqlx
 COPY src ./src
 COPY config.dev.yaml ./
 
-# 6. Build (only recompiles changed source)
-RUN cargo build --release --target x86_64-unknown-linux-musl && \
-    strip target/x86_64-unknown-linux-musl/release/megacommerce-search
+# 6. Build (WITHOUT musl target for rdkafka)
+RUN cargo build --release && \
+    strip target/release/megacommerce-search
 
 # Stage 2: Runtime
 FROM alpine:latest
 WORKDIR /app
-RUN apk add --no-cache libgcc postgresql-client ca-certificates librdkafka zstd-libs lz4-libs
-COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/megacommerce-search /usr/local/bin/
+
+# Install runtime dependencies (rdkafka needs glibc, not musl)
+RUN apk add --no-cache \
+    libgcc \
+    postgresql-client \
+    ca-certificates \
+    librdkafka \
+    zstd-libs \
+    lz4-libs \
+    # For dynamic linking (rdkafka needs glibc)
+    libc6-compat
+
+COPY --from=builder /app/target/release/megacommerce-search /usr/local/bin/
 COPY --from=builder /app/config.dev.yaml ./
+
 EXPOSE 50057
+
 CMD ["/usr/local/bin/megacommerce-search"]
