@@ -7,7 +7,7 @@ use crate::models::config::Config;
 use super::Server;
 
 impl Server {
-  pub async fn init_servie_config(&self) -> Result<(), BoxedErr> {
+  pub async fn init_service_config(&self) -> Result<(), BoxedErr> {
     let mut env_mode = env::var("ENV").unwrap_or("local".to_string());
     if !["local", "dev", "production"].contains(&env_mode.as_str()) {
       env_mode = "local".to_string();

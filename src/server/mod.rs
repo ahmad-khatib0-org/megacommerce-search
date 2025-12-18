@@ -48,7 +48,7 @@ impl Server {
       db: None,
     };
 
-    srv.init_servie_config().await?;
+    srv.init_service_config().await?;
 
     let common_args = CommonArgs { service_config: srv.service_config.lock().await.clone() };
     srv.common = Common::new(common_args).await?;
