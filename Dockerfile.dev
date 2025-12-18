@@ -1,40 +1,49 @@
 # Multi-stage build for Rust search service
-FROM rust:1.88-slim-bookworm AS base
+FROM rust:alpine AS builder
 
 WORKDIR /app
 
-ENV ENV=dev \
-    CARGO_NET_GIT_FETCH_WITH_CLI=true
-
-# Install system dependencies - ADD build-essential for C++ compiler (rdkafka)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    pkg-config \
-    libssl-dev \
-    postgresql-client \
-    curl \
+# 1. FIRST: Install ALL build dependencies (500MB layer - cached unless package list changes)
+RUN apk add --no-cache \
+    musl-dev \
+    pkgconfig \
+    openssl-dev \
+    build-base \
+    postgresql-dev \
+    curl-dev \
     python3 \
-    && rm -rf /var/lib/apt/lists/*
+    librdkafka-dev \
+    zlib-dev \
+    zstd-dev \
+    lz4-dev \
+    cmake \
+    g++
 
-# Dependencies stage
-FROM base AS deps
+# 2. Copy dependency files (changes rarely)
+COPY Cargo.toml Cargo.lock ./
 
+# 3. Create dummy src to cache dependencies
+RUN mkdir src && \
+    echo "fn main() {}" > src/main.rs && \
+    echo "// dummy" > src/lib.rs
+
+# 4. Download and cache dependencies (uses Cargo.lock)
+RUN cargo fetch --locked
+
+# 5. NOW copy source code (changes often)
 COPY .sqlx ./.sqlx
-COPY Cargo.toml Cargo.lock ./
 COPY src ./src
+COPY config.dev.yaml ./
 
-RUN cargo build --release 2>&1 | grep -v "warning:" || true
+# 6. Build (only recompiles changed source)
+RUN cargo build --release --target x86_64-unknown-linux-musl && \
+    strip target/x86_64-unknown-linux-musl/release/megacommerce-search
 
-# Development stage
-FROM base AS dev
-
-COPY Cargo.toml Cargo.lock ./
-COPY --from=deps /app/target ./target
-COPY src ./src
-COPY config.dev.yaml .
-
-RUN cargo install cargo-watch
-
+# Stage 2: Runtime
+FROM alpine:latest
+WORKDIR /app
+RUN apk add --no-cache libgcc postgresql-client ca-certificates librdkafka zstd-libs lz4-libs
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/megacommerce-search /usr/local/bin/
+COPY --from=builder /app/config.dev.yaml ./
 EXPOSE 50057
-
-CMD ["cargo", "watch", "-x", "run"]
+CMD ["/usr/local/bin/megacommerce-search"]
